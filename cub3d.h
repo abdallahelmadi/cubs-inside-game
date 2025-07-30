@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 10:26:19 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/07/30 12:04:03 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/07/30 12:27:32 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <unistd.h>
 # include <fcntl.h>
 # include <math.h>
-# include <float.h>
 # include <mlx.h>
 
 # define WIN_WIDTH 1280
