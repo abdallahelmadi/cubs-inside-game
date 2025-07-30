@@ -1,32 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   gameinit.c                                         :+:      :+:    :+:   */
+/*   fetcher.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 11:17:26 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/07/30 16:23:06 by abdael-m         ###   ########.fr       */
+/*   Created: 2025/07/30 15:58:03 by abdael-m          #+#    #+#             */
+/*   Updated: 2025/07/30 15:58:45 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cub3d.h>
 
-
-void	gameinit(char **map, char **textures, int *colors)
+void	fetcher(t_init *g)
 {
-	t_init	init;
-
-	init.colors = colors;
-	init.textures = textures;
-	init.map = map;
-	init.mlx = mlx_init();
-	init.win = mlx_new_window(init.mlx, WIN_WIDTH, WIN_HEIGHT, "...");
-
-	// just for now i will define use position
-	init.player.x = 123;
-	init.player.x = 83;
- 
-	mlx_hook(init.win, 2, 1L << 0, keypress, &init);
-	mlx_loop(init.mlx);
+	(void)g;
+	return ;
 }

@@ -4,7 +4,7 @@ NAME = cub3D
 LINKINGFLAGS = -lm -lmlx -lX11 -lXext
 CFLAGS = -I./ # -Wextra -Wall -Werror
 OBJECTS = cub3d.o \
-	      ./ray-casting/gameinit.o
+	      ./ray-casting/gameinit.o ./ray-casting/keypress.o ./ray-casting/fetcher.o
 
 all : $(NAME)
 

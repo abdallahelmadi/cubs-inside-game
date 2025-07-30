@@ -1,32 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   gameinit.c                                         :+:      :+:    :+:   */
+/*   keypress.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 11:17:26 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/07/30 16:23:06 by abdael-m         ###   ########.fr       */
+/*   Created: 2025/07/30 15:58:50 by abdael-m          #+#    #+#             */
+/*   Updated: 2025/07/30 16:07:51 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cub3d.h>
 
-
-void	gameinit(char **map, char **textures, int *colors)
+int	keypress(int key, void *g)
 {
-	t_init	init;
+	t_init *init = (t_init *)g;
 
-	init.colors = colors;
-	init.textures = textures;
-	init.map = map;
-	init.mlx = mlx_init();
-	init.win = mlx_new_window(init.mlx, WIN_WIDTH, WIN_HEIGHT, "...");
+	if (key == 97)
+		init->player.x -= 1;
+	else if (key == 115)
+		init->player.y += 1;
+	else if (key == 100)
+		init->player.x += 1;
+	else if (key == 119)
+		init->player.y -= 1;
 
-	// just for now i will define use position
-	init.player.x = 123;
-	init.player.x = 83;
- 
-	mlx_hook(init.win, 2, 1L << 0, keypress, &init);
-	mlx_loop(init.mlx);
+	printf("x: %d, y: %d\n", init->player.x, init->player.y);
+	return (0);
 }
