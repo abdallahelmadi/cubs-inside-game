@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 11:17:26 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/07/30 12:03:22 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:35:30 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,5 @@ void	gameinit(char **map, char **textures, int *colors)
 	init.map = map;
 	init.mlx = mlx_init();
 	init.win = mlx_new_window(init.mlx, WIN_WIDTH, WIN_HEIGHT, "...");
-	draw_background(&init);
 	mlx_loop(init.mlx);
 }

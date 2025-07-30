@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 10:26:19 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/07/30 12:27:32 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:28:34 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,5 @@ typedef struct s_init
 }	t_init;
 
 void	gameinit(char **map, char **textures, int *colors);
-void	draw_background(t_init *g);
 
 #endif
