@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/06 10:33:48 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/06 11:38:18 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@
 # define COLS 15
 # define WIN_WIDTH 240
 # define WIN_HEIGHT 160
-
-# ifndef PI
-#  define PI 3.14159265358979323846
-# endif
 
 typedef struct s_player
 {
