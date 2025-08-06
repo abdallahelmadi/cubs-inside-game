@@ -2,9 +2,8 @@ CC = cc
 RM = rm -rf
 NAME = cub3D
 LINKINGFLAGS = -lm -lmlx -lX11 -lXext
-CFLAGS = -I./ # -Wextra -Wall -Werror
-OBJECTS = cub3d.o \
-	      ./ray-casting/gameinit.o
+CFLAGS = -I./ -Wextra -Wall -Werror
+OBJECTS = cub3d.o
 
 all : $(NAME)
 

@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/30 10:26:19 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/07/31 09:17:31 by abdael-m         ###   ########.fr       */
+/*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
+/*   Updated: 2025/08/06 10:33:48 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,23 +20,24 @@
 # include <math.h>
 # include <mlx.h>
 
-# define TILE_SIZE 32
+# define TILE_SIZE 16
 # define ROWS 10
 # define COLS 15
-# define WIN_WIDTH COLS * TILE_SIZE
-# define WIN_HEIGHT ROWS * TILE_SIZE
-# define FOV 60
-# define RES 4
-# define NUM_RAYS WIN_WIDTH / RES
+# define WIN_WIDTH 240
+# define WIN_HEIGHT 160
+
+# ifndef PI
+#  define PI 3.14159265358979323846
+# endif
 
 typedef struct s_player
 {
-	double	x;
-	double	y;
-	double	angle;
+	double	px;
+	double	py;
+	double	angler;
 }	t_player;
 
-typedef struct s_init
+typedef struct s_globaldata
 {
 	void		*mlx;
 	void		*win;
@@ -44,8 +45,8 @@ typedef struct s_init
 	char		**textures;
 	int			*colors;
 	t_player	player;
-}	t_init;
+}	t_globaldata;
 
-void	gameinit(char **map, char **textures, int *colors);\
+void	gameinit(char **map, char **textures, int *colors);
 
 #endif
