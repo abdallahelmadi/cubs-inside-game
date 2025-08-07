@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/06 11:38:18 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/07 08:43:51 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@
 # include <math.h>
 # include <mlx.h>
 
-# define TILE_SIZE 16
+# define TILE_SIZE 30
 # define ROWS 10
 # define COLS 15
-# define WIN_WIDTH 240
-# define WIN_HEIGHT 160
+# define WIN_WIDTH 450
+# define WIN_HEIGHT 300
 
 typedef struct s_player
 {

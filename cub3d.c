@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/06 11:58:17 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/07 09:03:40 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,37 +26,80 @@ int	ft_charcmp(char c, char *s)
 	return (0);
 }
 
+int	is_wall(t_globaldata *data, double x, double y)
+{
+	int	map_x = (int)(x / TILE_SIZE);
+	int	map_y = (int)(y / TILE_SIZE);
+
+	if (data->map[map_y][map_x] == '1')
+		return (1); // It's a wall
+	return (0);     // It's empty
+}
+
 int	handle_press(int key, t_globaldata *arg)
 {
 	mlx_clear_window(arg->mlx, arg->win);
 	double move_speed = 2.1; // Adjust speed as needed
 
-	if (key == 119) // W - forward
+	if (key == 119) // W
 	{
-		arg->player.px += cos(arg->player.angler) * move_speed;
-		arg->player.py += sin(arg->player.angler) * move_speed;
+		double new_x = arg->player.px + cos(arg->player.angler) * move_speed;
+		double new_y = arg->player.py + sin(arg->player.angler) * move_speed;
+		if (!is_wall(arg, new_x, new_y))
+		{
+			arg->player.px = new_x;
+			arg->player.py = new_y;
+		}
 	}
-	if (key == 115) // S - backward
+
+	if (key == 115) // S
 	{
-		arg->player.px -= cos(arg->player.angler) * move_speed;
-		arg->player.py -= sin(arg->player.angler) * move_speed;
+		double new_x = arg->player.px - cos(arg->player.angler) * move_speed;
+		double new_y = arg->player.py - sin(arg->player.angler) * move_speed;
+		if (!is_wall(arg, new_x, new_y))
+		{
+			arg->player.px = new_x;
+			arg->player.py = new_y;
+		}
 	}
-	if (key == 97) // A - strafe left
+
+	if (key == 97) // A
 	{
-		arg->player.px += cos(arg->player.angler - M_PI_2) * move_speed;
-		arg->player.py += sin(arg->player.angler - M_PI_2) * move_speed;
+		double new_x = arg->player.px + cos(arg->player.angler - M_PI_2) * move_speed;
+		double new_y = arg->player.py + sin(arg->player.angler - M_PI_2) * move_speed;
+		if (!is_wall(arg, new_x, new_y))
+		{
+			arg->player.px = new_x;
+			arg->player.py = new_y;
+		}
 	}
-	if (key == 100) // D - strafe right
+
+	if (key == 100) // D
 	{
-		arg->player.px += cos(arg->player.angler + M_PI_2) * move_speed;
-		arg->player.py += sin(arg->player.angler + M_PI_2) * move_speed;
+		double new_x = arg->player.px + cos(arg->player.angler + M_PI_2) * move_speed;
+		double new_y = arg->player.py + sin(arg->player.angler + M_PI_2) * move_speed;
+		if (!is_wall(arg, new_x, new_y))
+		{
+			arg->player.px = new_x;
+			arg->player.py = new_y;
+		}
 	}
+
+	if (key == 65361)
+	{
+    	arg->player.angler -= M_PI/12;
+		if (arg->player.angler < 0)
+    		arg->player.angler += 2 * M_PI;
+	}
+    if (key == 65363)
+	{
+    	arg->player.angler += M_PI/12;
+		if (arg->player.angler > 2 * M_PI)
+    		arg->player.angler -= 2 * M_PI;
+	}
+
 	if (key == 65307) // ESC
-		printf("esc\n");
-	if (key == 65361) // LEFT arrow
-		printf("left\n");
-	if (key == 65363) // RIGHT arrow
-		printf("right\n");
+		exit(0);
 	return (0);
 }
 
@@ -94,6 +137,19 @@ void	draw_player(t_globaldata *data)
 			x++;
 		}
 		y++;
+	}
+
+	double dx = cos(data->player.angler);
+	double dy = sin(data->player.angler);
+	double i = 0;
+	while (1)
+	{
+		int line_x = data->player.px + dx * i;
+		int line_y = data->player.py + dy * i;
+		if (data->map[line_y / TILE_SIZE][line_x / TILE_SIZE] == '1')
+			break ;
+		mlx_pixel_put(data->mlx, data->win, line_x, line_y, 0x00FF00); // Green
+		i += 1;
 	}
 }
 
