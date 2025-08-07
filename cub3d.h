@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/07 12:20:38 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/07 17:33:03 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,11 @@
 # include <mlx.h>
 
 # define TILE_SIZE 30 // size of squares
-# define ROWS 10 // the rows of window
-# define COLS 15 // the coloums of window
 # define WIN_WIDTH 450 // total width for window
 # define WIN_HEIGHT 300 // total height for window
 // 60 in angler, the view margin of player, result of (PI / 3)
 # define FOV 1.0471975511965977461542144610932
 /**/
-# define NUM_RAYS 120 // number of rays will be fetched
 # define PI 3.14159265358979323846 // value of PI
 # define PI2 6.28318530717958647692 // value of PI * 2
 
@@ -60,5 +57,23 @@ typedef struct s_globaldata
 
 // the function linking between parsing and ray-casting
 void	gameinit(char **map, char **textures, int *colors);
+
+// declare user data using the map of argument
+void	playerinit(t_globaldata *t);
+
+// check if c include in s
+int		ft_charcmp(char c, char *s);
+
+// the function how's rerender each time to make animation
+int		rerenderinit(t_globaldata *t);
+
+// draw 2D wall
+void	ft_drawwall(int start_x, int start_y, t_globaldata *t);
+
+// draw player position
+void	ft_drawplayer(t_globaldata *t);
+
+// draw rays
+void	ft_drawrays(t_globaldata *t);
 
 #endif

@@ -6,12 +6,233 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/07 10:50:23 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/07 19:14:54 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cub3d.h>
 
+int	check_collision(t_globaldata *t, double x, double y)
+{
+	int	map_x = (int)(x / TILE_SIZE);
+	int	map_y = (int)(y / TILE_SIZE);
+
+	if (t->map[map_y][map_x] == '1')
+		return (1); // It's a wall
+	return (0);     // It's empty
+}
+
+int tester(t_globaldata *data, double x, double y)
+{
+	double buffer = 1; // margin for player size
+	return (
+		check_collision(data, x + buffer, y + buffer) ||
+		check_collision(data, x - buffer, y + buffer) ||
+		check_collision(data, x + buffer, y - buffer) ||
+		check_collision(data, x - buffer, y - buffer)
+	);
+}
+
+int	handle_press(int key, t_globaldata *t)
+{
+	mlx_clear_window(t->mlx, t->win);
+	double move_speed = 2.1; // Adjust speed as needed
+
+	if (key == 119) // W
+	{
+		double new_x = t->player.px + cos(t->player.angler) * move_speed;
+		double new_y = t->player.py + sin(t->player.angler) * move_speed;
+		if (!check_collision(t, new_x, new_y))
+		{
+			t->player.px = new_x;
+			t->player.py = new_y;
+		}
+	}
+
+	if (key == 115) // S
+	{
+		double new_x = t->player.px - cos(t->player.angler) * move_speed;
+		double new_y = t->player.py - sin(t->player.angler) * move_speed;
+		if (!check_collision(t, new_x, new_y))
+		{
+			t->player.px = new_x;
+			t->player.py = new_y;
+		}
+	}
+
+	if (key == 97) // A
+	{
+		double new_x = t->player.px + cos(t->player.angler - M_PI_2) * move_speed;
+		double new_y = t->player.py + sin(t->player.angler - M_PI_2) * move_speed;
+		if (!check_collision(t, new_x, new_y))
+		{
+			t->player.px = new_x;
+			t->player.py = new_y;
+		}
+	}
+
+	if (key == 100) // D
+	{
+		double new_x = t->player.px + cos(t->player.angler + M_PI_2) * move_speed;
+		double new_y = t->player.py + sin(t->player.angler + M_PI_2) * move_speed;
+		if (!check_collision(t, new_x, new_y))
+		{
+			t->player.px = new_x;
+			t->player.py = new_y;
+		}
+	}
+
+	if (key == 65361)
+	{
+    	t->player.angler -= M_PI/12;
+		if (t->player.angler < 0)
+    		t->player.angler += 2 * M_PI;
+	}
+    if (key == 65363)
+	{
+    	t->player.angler += M_PI/12;
+		if (t->player.angler > 2 * M_PI)
+    		t->player.angler -= 2 * M_PI;
+	}
+
+	if (key == 65307) // ESC
+		exit(0);
+	return (0);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+  draw rays, explaination:
+  - ray_angle: stores the angle of the current ray being cast.
+  - ray_step: the amount to increment the angle after each ray.
+  - i: how many rays will cast.
+
+  - 136: FOV / WIN_WIDTH to get the step of rays moves each time in radians (not px).
+  - 137: the dection of view - FOV / 2, to get the first rays radians position.
+  - 141, 144: if the ray_angle get out of 2PI range, set it to correct one.
+*/
+
+void	ft_drawrays(t_globaldata *t)
+{
+	double	(ray_angle), (ray_step);
+	int		i;
+
+	ray_step = FOV / WIN_WIDTH;
+	ray_angle = t->player.angler - (FOV / 2);
+	i = -1;
+	while (++i < WIN_WIDTH)
+	{
+		if (ray_angle < 0)
+			ray_angle += PI2;
+		if (ray_angle > PI2)
+			ray_angle -= PI2;
+
+
+
+		// still here
+		double dx = cos(ray_angle);
+		double dy = sin(ray_angle);
+		double length = 0;
+		while (1)
+		{
+			int ray_x = t->player.px + dx * length;
+			int ray_y = t->player.py + dy * length;
+
+			if (ray_x < 0 || ray_x >= WIN_WIDTH || ray_y < 0 || ray_y >= WIN_HEIGHT)
+				break ;
+			if (tester(t, ray_x, ray_y))
+				break ;
+			mlx_pixel_put(t->mlx, t->win, ray_x, ray_y, 0x00FF00);
+			length += 1;
+		}
+		// still here
+
+
+
+		ray_angle += ray_step;
+	}
+}
+
+/*
+  draw player position
+*/
+void	ft_drawplayer(t_globaldata *t)
+{
+	int	(x), (y);
+
+	y = -1;
+	while (++y < 4)
+	{
+		x = -1;
+		while (++x < 4)
+			mlx_pixel_put(t->mlx, t->win, t->player.px + x, t->player.py + y, 0xFF0000);
+	}
+}
+
+/*
+  draw 2D wall
+*/
+void	ft_drawwall(int start_x, int start_y, t_globaldata *t)
+{
+	int	(x), (y);
+
+	y = -1;
+	while (++y < TILE_SIZE)
+	{
+		x = -1;
+		while (++x < TILE_SIZE)
+		{
+			if (y == 0 || x == 0)
+				mlx_pixel_put(t->mlx, t->win, start_x + x, start_y + y, 0x000000);
+			else
+				mlx_pixel_put(t->mlx, t->win, start_x + x, start_y + y, 0xFFFFFF);
+		}
+	}
+}
+
+/*
+  the function how's rerender each time to make animation,
+  we call all fucntion of fetching here.
+*/
+int	rerenderinit(t_globaldata *t)
+{
+	int	(x), (y);
+
+	y = -1;
+	while (t->map[++y])
+	{
+		x = -1;
+		while (t->map[y][++x])
+		{
+			if (ft_charcmp(t->map[y][x], "1"))
+				ft_drawwall(x * TILE_SIZE, y * TILE_SIZE, t);
+		}
+	}
+	ft_drawplayer(t);
+	ft_drawrays(t);
+	return (0);
+}
+
+/*
+  check if c include in s
+*/
 int	ft_charcmp(char c, char *s)
 {
 	int	i;
@@ -26,254 +247,69 @@ int	ft_charcmp(char c, char *s)
 	return (0);
 }
 
-int	check_collision(t_globaldata *data, double x, double y)
+/*
+  first we try to found the play as N, E, W or S,
+  and define the player x, y position.
+  in finall we define the view deriction in angler.
+*/
+void	playerinit(t_globaldata *t)
 {
-	int	map_x = (int)(x / TILE_SIZE);
-	int	map_y = (int)(y / TILE_SIZE);
+	int	(x), (y);
 
-	if (data->map[map_y][map_x] == '1')
-		return (1); // It's a wall
-	return (0);     // It's empty
-}
-
-// int check_collision(t_globaldata *data, double x, double y)
-// {
-// 	double buffer = 5; // margin for player size
-// 	return (
-// 		is_wall(data, x + buffer, y + buffer) ||
-// 		is_wall(data, x - buffer, y + buffer) ||
-// 		is_wall(data, x + buffer, y - buffer) ||
-// 		is_wall(data, x - buffer, y - buffer)
-// 	);
-// }
-
-int	handle_press(int key, t_globaldata *arg)
-{
-	mlx_clear_window(arg->mlx, arg->win);
-	double move_speed = 2.1; // Adjust speed as needed
-
-	if (key == 119) // W
+	y = -1;
+	while (t->map[++y])
 	{
-		double new_x = arg->player.px + cos(arg->player.angler) * move_speed;
-		double new_y = arg->player.py + sin(arg->player.angler) * move_speed;
-		if (!check_collision(arg, new_x, new_y))
+		x = -1;
+		while (t->map[y][++x])
 		{
-			arg->player.px = new_x;
-			arg->player.py = new_y;
-		}
-	}
-
-	if (key == 115) // S
-	{
-		double new_x = arg->player.px - cos(arg->player.angler) * move_speed;
-		double new_y = arg->player.py - sin(arg->player.angler) * move_speed;
-		if (!check_collision(arg, new_x, new_y))
-		{
-			arg->player.px = new_x;
-			arg->player.py = new_y;
-		}
-	}
-
-	if (key == 97) // A
-	{
-		double new_x = arg->player.px + cos(arg->player.angler - M_PI_2) * move_speed;
-		double new_y = arg->player.py + sin(arg->player.angler - M_PI_2) * move_speed;
-		if (!check_collision(arg, new_x, new_y))
-		{
-			arg->player.px = new_x;
-			arg->player.py = new_y;
-		}
-	}
-
-	if (key == 100) // D
-	{
-		double new_x = arg->player.px + cos(arg->player.angler + M_PI_2) * move_speed;
-		double new_y = arg->player.py + sin(arg->player.angler + M_PI_2) * move_speed;
-		if (!check_collision(arg, new_x, new_y))
-		{
-			arg->player.px = new_x;
-			arg->player.py = new_y;
-		}
-	}
-
-	if (key == 65361)
-	{
-    	arg->player.angler -= M_PI/12;
-		if (arg->player.angler < 0)
-    		arg->player.angler += 2 * M_PI;
-	}
-    if (key == 65363)
-	{
-    	arg->player.angler += M_PI/12;
-		if (arg->player.angler > 2 * M_PI)
-    		arg->player.angler -= 2 * M_PI;
-	}
-
-	if (key == 65307) // ESC
-		exit(0);
-	return (0);
-}
-
-void	draw_wall(int start_x, int start_y, t_globaldata *data)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (y < TILE_SIZE)
-	{
-		x = 0;
-		while (x < TILE_SIZE)
-		{
-			mlx_pixel_put(data->mlx, data->win, start_x + x, start_y + y, 0xFFFFFF);
-			x++;
-		}
-		y++;
-	}
-}
-
-void	draw_rays(t_globaldata *data)
-{
-	double	ray_angle;
-	double	ray_step;
-	int		i;
-
-	ray_step = FOV / NUM_RAYS;
-	ray_angle = data->player.angler - (FOV / 2);
-	i = 0;
-	while (i < NUM_RAYS)
-	{
-		double dx = cos(ray_angle);
-		double dy = sin(ray_angle);
-		double length = 0;
-
-		while (1)
-		{
-			int ray_x = data->player.px + dx * length;
-			int ray_y = data->player.py + dy * length;
-
-			if (ray_x < 0 || ray_x >= WIN_WIDTH || ray_y < 0 || ray_y >= WIN_HEIGHT)
-				break ;
-			if (data->map[ray_y / TILE_SIZE][ray_x / TILE_SIZE] == '1')
-				break ;
-			mlx_pixel_put(data->mlx, data->win, ray_x, ray_y, 0x00FF00);
-			length += 1;
-		}
-		ray_angle += ray_step;
-		if (ray_angle < 0)
-		    ray_angle += 2 * M_PI;
-		if (ray_angle > 2 * M_PI)
-		    ray_angle -= 2 * M_PI;
-		i++;
-	}
-}
-
-void	draw_player(t_globaldata *data)
-{
-	int	x;
-	int	y;
-
-	y = -2;
-	while (y < 2)
-	{
-		x = -2;
-		while (x < 2)
-		{
-			mlx_pixel_put(data->mlx, data->win,
-				data->player.px + x, data->player.py + y, 0xFF0000);
-			x++;
-		}
-		y++;
-	}
-
-	double dx = cos(data->player.angler);
-	double dy = sin(data->player.angler);
-	double i = 0;
-	while (1)
-	{
-		int line_x = data->player.px + dx * i;
-		int line_y = data->player.py + dy * i;
-		if (data->map[line_y / TILE_SIZE][line_x / TILE_SIZE] == '1')
-			break ;
-		mlx_pixel_put(data->mlx, data->win, line_x, line_y, 0x00FF00); // Green
-		i += 1;
-	}
-}
-
-int	rerenderinit(t_globaldata *data)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (data->map[y])
-	{
-		x = 0;
-		while (data->map[y][x])
-		{
-			if (ft_charcmp(data->map[y][x], "1"))
-				draw_wall(x * TILE_SIZE, y * TILE_SIZE, data);
-			x++;
-		}
-		y++;
-	}
-	draw_player(data); // Draw player after map ✅
-	draw_rays(data);
-	return (0);
-}
-
-void	playerinit(t_globaldata *data)
-{
-	int	x;
-	int	y;
-
-	y = 0;
-	while (data->map[y])
-	{
-		x = 0;
-		while (data->map[y][x])
-		{
-			if (ft_charcmp(data->map[y][x], "NEWS"))
+			if (ft_charcmp(t->map[y][x], "NEWS"))
 			{
-				data->player.px = x * TILE_SIZE + TILE_SIZE / 2;
-				data->player.py = y * TILE_SIZE + TILE_SIZE / 2;
-				if (data->map[y][x] == 'N')
-					data->player.angler = M_PI / 2;
-				else if (data->map[y][x] == 'S')
-					data->player.angler = 3 * M_PI / 2;
-				else if (data->map[y][x] == 'E')
-					data->player.angler = 0;
-				else if (data->map[y][x] == 'W')
-					data->player.angler = M_PI;
+				t->player.px = x * TILE_SIZE + TILE_SIZE / 2;
+				t->player.py = y * TILE_SIZE + TILE_SIZE / 2;
+				if (t->map[y][x] == 'N')
+					t->player.angler = PI / 2;
+				else if (t->map[y][x] == 'E')
+					t->player.angler = 0;
+				else if (t->map[y][x] == 'W')
+					t->player.angler = PI;
+				else if (t->map[y][x] == 'S')
+					t->player.angler = 3 * PI / 2;
 				return ;
 			}
-			x++;
 		}
-		y++;
 	}
 }
 
+/*
+  create globaldata struct and open window, create player and define it.
+  and rerend the rerenderinit function to create animation.
+  with the press events handling.
+*/
 void	gameinit(char **map, char **textures, int *colors)
 {
-	t_globaldata	data;
+	t_globaldata	t;
 
-	data.colors = colors;
-	data.textures = textures;
-	data.map = map;
-	data.mlx = mlx_init();
-	data.win = mlx_new_window(data.mlx, WIN_WIDTH, WIN_HEIGHT, "cub3d");
-	playerinit(&data);
-	mlx_loop_hook(data.mlx, rerenderinit, &data);
-	mlx_hook(data.win, 2, 1L << 0, handle_press, &data);
-	mlx_loop(data.mlx);
+	t.colors = colors;
+	t.textures = textures;
+	t.map = map;
+	t.mlx = mlx_init();
+	t.win = mlx_new_window(t.mlx, WIN_WIDTH, WIN_HEIGHT, "...");
+	playerinit(&t);
+	mlx_loop_hook(t.mlx, rerenderinit, &t);
+	mlx_hook(t.win, 2, 1L << 0, handle_press, &t);
+	mlx_loop(t.mlx);
 }
 
+/*
+  you just need to call gameinit function to start the ray-casting.
+  the values of parameter, should be allocted to be freed later.
+*/
 int	main(void)
 {
 	gameinit(
 		(char *[]){
 		"111111111111111",
-		"1N0000000000101",
+		"1W0000000000101",
 		"100000000000101",
 		"100000000000101",
 		"100000000000101",
@@ -291,7 +327,7 @@ int	main(void)
 		"./path_to_the_east_texture",
 		NULL
 	},
-		(int []){0xffffff, 0xff0000}
+		(int []){0xFFFFFF, 0xFF0000}
 	);
 	return (0);
 }
