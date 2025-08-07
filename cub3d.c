@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/07 09:03:40 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/07 10:50:23 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	ft_charcmp(char c, char *s)
 	return (0);
 }
 
-int	is_wall(t_globaldata *data, double x, double y)
+int	check_collision(t_globaldata *data, double x, double y)
 {
 	int	map_x = (int)(x / TILE_SIZE);
 	int	map_y = (int)(y / TILE_SIZE);
@@ -35,6 +35,17 @@ int	is_wall(t_globaldata *data, double x, double y)
 		return (1); // It's a wall
 	return (0);     // It's empty
 }
+
+// int check_collision(t_globaldata *data, double x, double y)
+// {
+// 	double buffer = 5; // margin for player size
+// 	return (
+// 		is_wall(data, x + buffer, y + buffer) ||
+// 		is_wall(data, x - buffer, y + buffer) ||
+// 		is_wall(data, x + buffer, y - buffer) ||
+// 		is_wall(data, x - buffer, y - buffer)
+// 	);
+// }
 
 int	handle_press(int key, t_globaldata *arg)
 {
@@ -45,7 +56,7 @@ int	handle_press(int key, t_globaldata *arg)
 	{
 		double new_x = arg->player.px + cos(arg->player.angler) * move_speed;
 		double new_y = arg->player.py + sin(arg->player.angler) * move_speed;
-		if (!is_wall(arg, new_x, new_y))
+		if (!check_collision(arg, new_x, new_y))
 		{
 			arg->player.px = new_x;
 			arg->player.py = new_y;
@@ -56,7 +67,7 @@ int	handle_press(int key, t_globaldata *arg)
 	{
 		double new_x = arg->player.px - cos(arg->player.angler) * move_speed;
 		double new_y = arg->player.py - sin(arg->player.angler) * move_speed;
-		if (!is_wall(arg, new_x, new_y))
+		if (!check_collision(arg, new_x, new_y))
 		{
 			arg->player.px = new_x;
 			arg->player.py = new_y;
@@ -67,7 +78,7 @@ int	handle_press(int key, t_globaldata *arg)
 	{
 		double new_x = arg->player.px + cos(arg->player.angler - M_PI_2) * move_speed;
 		double new_y = arg->player.py + sin(arg->player.angler - M_PI_2) * move_speed;
-		if (!is_wall(arg, new_x, new_y))
+		if (!check_collision(arg, new_x, new_y))
 		{
 			arg->player.px = new_x;
 			arg->player.py = new_y;
@@ -78,7 +89,7 @@ int	handle_press(int key, t_globaldata *arg)
 	{
 		double new_x = arg->player.px + cos(arg->player.angler + M_PI_2) * move_speed;
 		double new_y = arg->player.py + sin(arg->player.angler + M_PI_2) * move_speed;
-		if (!is_wall(arg, new_x, new_y))
+		if (!check_collision(arg, new_x, new_y))
 		{
 			arg->player.px = new_x;
 			arg->player.py = new_y;
@@ -118,6 +129,42 @@ void	draw_wall(int start_x, int start_y, t_globaldata *data)
 			x++;
 		}
 		y++;
+	}
+}
+
+void	draw_rays(t_globaldata *data)
+{
+	double	ray_angle;
+	double	ray_step;
+	int		i;
+
+	ray_step = FOV / NUM_RAYS;
+	ray_angle = data->player.angler - (FOV / 2);
+	i = 0;
+	while (i < NUM_RAYS)
+	{
+		double dx = cos(ray_angle);
+		double dy = sin(ray_angle);
+		double length = 0;
+
+		while (1)
+		{
+			int ray_x = data->player.px + dx * length;
+			int ray_y = data->player.py + dy * length;
+
+			if (ray_x < 0 || ray_x >= WIN_WIDTH || ray_y < 0 || ray_y >= WIN_HEIGHT)
+				break ;
+			if (data->map[ray_y / TILE_SIZE][ray_x / TILE_SIZE] == '1')
+				break ;
+			mlx_pixel_put(data->mlx, data->win, ray_x, ray_y, 0x00FF00);
+			length += 1;
+		}
+		ray_angle += ray_step;
+		if (ray_angle < 0)
+		    ray_angle += 2 * M_PI;
+		if (ray_angle > 2 * M_PI)
+		    ray_angle -= 2 * M_PI;
+		i++;
 	}
 }
 
@@ -171,6 +218,7 @@ int	rerenderinit(t_globaldata *data)
 		y++;
 	}
 	draw_player(data); // Draw player after map ✅
+	draw_rays(data);
 	return (0);
 }
 
