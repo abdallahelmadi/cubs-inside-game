@@ -6,134 +6,120 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/07 19:14:54 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/08 11:56:11 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cub3d.h>
 
-int	check_collision(t_globaldata *t, double x, double y)
+/*
+  helper for handle_press function
+*/
+void	ft_setplayer(double new_x, double new_y, t_globaldata *t)
 {
-	int	map_x = (int)(x / TILE_SIZE);
-	int	map_y = (int)(y / TILE_SIZE);
-
-	if (t->map[map_y][map_x] == '1')
-		return (1); // It's a wall
-	return (0);     // It's empty
+	if (!is_player_colliding(t, new_x, new_y))
+	{
+		t->player.px = new_x;
+		t->player.py = new_y;
+	}
 }
 
-int tester(t_globaldata *data, double x, double y)
+/*
+  helper for handle_press function
+*/
+void	ft_setfov(double angler, t_globaldata *t)
 {
-	double buffer = 1; // margin for player size
-	return (
-		check_collision(data, x + buffer, y + buffer) ||
-		check_collision(data, x - buffer, y + buffer) ||
-		check_collision(data, x + buffer, y - buffer) ||
-		check_collision(data, x - buffer, y - buffer)
-	);
+	t->player.angler = angler;
+	if (t->player.angler < 0)
+		t->player.angler += 2 * PI;
+	else if (t->player.angler > 2 * PI)
+		t->player.angler -= 2 * PI;
 }
 
+/*
+  exit and free the resources
+*/
+int	exit_free(t_globaldata *t)
+{
+	(void)t;
+	exit(0);
+}
+
+/*
+  handle the key press
+  - 119: W
+  - 115: S
+  - 97: A
+  - 100: D
+  - 65361: left
+  - 65363: right
+  - 65307: esc
+*/
 int	handle_press(int key, t_globaldata *t)
 {
 	mlx_clear_window(t->mlx, t->win);
-	double move_speed = 2.1; // Adjust speed as needed
-
-	if (key == 119) // W
-	{
-		double new_x = t->player.px + cos(t->player.angler) * move_speed;
-		double new_y = t->player.py + sin(t->player.angler) * move_speed;
-		if (!check_collision(t, new_x, new_y))
-		{
-			t->player.px = new_x;
-			t->player.py = new_y;
-		}
-	}
-
-	if (key == 115) // S
-	{
-		double new_x = t->player.px - cos(t->player.angler) * move_speed;
-		double new_y = t->player.py - sin(t->player.angler) * move_speed;
-		if (!check_collision(t, new_x, new_y))
-		{
-			t->player.px = new_x;
-			t->player.py = new_y;
-		}
-	}
-
-	if (key == 97) // A
-	{
-		double new_x = t->player.px + cos(t->player.angler - M_PI_2) * move_speed;
-		double new_y = t->player.py + sin(t->player.angler - M_PI_2) * move_speed;
-		if (!check_collision(t, new_x, new_y))
-		{
-			t->player.px = new_x;
-			t->player.py = new_y;
-		}
-	}
-
-	if (key == 100) // D
-	{
-		double new_x = t->player.px + cos(t->player.angler + M_PI_2) * move_speed;
-		double new_y = t->player.py + sin(t->player.angler + M_PI_2) * move_speed;
-		if (!check_collision(t, new_x, new_y))
-		{
-			t->player.px = new_x;
-			t->player.py = new_y;
-		}
-	}
-
+	if (key == 119)
+		ft_setplayer(t->player.px + cos(t->player.angler) * 3,
+			t->player.py + sin(t->player.angler) * 3, t);
+	if (key == 115)
+		ft_setplayer(t->player.px - cos(t->player.angler) * 3,
+			t->player.py - sin(t->player.angler) * 3, t);
+	if (key == 97)
+		ft_setplayer(t->player.px + cos(t->player.angler - PID2) * 3,
+			t->player.py + sin(t->player.angler - PID2), t);
+	if (key == 100)
+		ft_setplayer(t->player.px + cos(t->player.angler + PID2) * 3,
+			t->player.py + sin(t->player.angler + PID2) * 3, t);
 	if (key == 65361)
-	{
-    	t->player.angler -= M_PI/12;
-		if (t->player.angler < 0)
-    		t->player.angler += 2 * M_PI;
-	}
-    if (key == 65363)
-	{
-    	t->player.angler += M_PI/12;
-		if (t->player.angler > 2 * M_PI)
-    		t->player.angler -= 2 * M_PI;
-	}
-
-	if (key == 65307) // ESC
-		exit(0);
+		ft_setfov(t->player.angler - PI / 12, t);
+	if (key == 65363)
+		ft_setfov(t->player.angler + PI / 12, t);
+	if (key == 65307)
+		exit_free(t);
 	return (0);
 }
 
+/*
+  check if the position is inside wall
+*/
+int	ft_iswall(t_globaldata *t, double currently_x, double currently_y)
+{
+	return (t->map[(int)(currently_y / TILE_SIZE)]
+		[(int)(currently_x / TILE_SIZE)] == '1');
+}
 
+/*
+  check all direction of FOV of player if are walls
+*/
+int	is_player_colliding(t_globaldata *t, double currently_x, double currently_y)
+{
+	double	buffer;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	buffer = 1;
+	return (ft_iswall(t, currently_x + buffer, currently_y + buffer)
+		|| ft_iswall(t, currently_x - buffer, currently_y + buffer)
+		|| ft_iswall(t, currently_x + buffer, currently_y - buffer)
+		|| ft_iswall(t, currently_x - buffer, currently_y - buffer));
+}
 
 /*
   draw rays, explaination:
+  - i: how many rays will cast.
   - ray_angle: stores the angle of the current ray being cast.
   - ray_step: the amount to increment the angle after each ray.
-  - i: how many rays will cast.
+  - dx, dy: the value each time we need to add to the position (.., ..)
+    to still in same angler for x and y.
+  - ray_x, ray_y: position of player + the angler position movment, for make
+    the ray in the way of angler.
 
-  - 136: FOV / WIN_WIDTH to get the step of rays moves each time in radians (not px).
-  - 137: the dection of view - FOV / 2, to get the first rays radians position.
-  - 141, 144: if the ray_angle get out of 2PI range, set it to correct one.
+  - 140: FOV / WIN_WIDTH to get the step of rays
+    moves each time in radians (not px).
+  - 141: the dection of view - FOV / 2, to get the first rays radians position.
+  - 145, 148: if the ray_angle get out of 2PI range, set it to correct one.
 */
-
 void	ft_drawrays(t_globaldata *t)
 {
-	double	(ray_angle), (ray_step);
-	int		i;
-
+	double (ray_angle), (ray_step), (dx), (dy), (ray_x), (ray_y), (i);
 	ray_step = FOV / WIN_WIDTH;
 	ray_angle = t->player.angler - (FOV / 2);
 	i = -1;
@@ -143,29 +129,18 @@ void	ft_drawrays(t_globaldata *t)
 			ray_angle += PI2;
 		if (ray_angle > PI2)
 			ray_angle -= PI2;
-
-
-
-		// still here
-		double dx = cos(ray_angle);
-		double dy = sin(ray_angle);
-		double length = 0;
+		dx = cos(ray_angle);
+		dy = sin(ray_angle);
+		ray_x = t->player.px + dx;
+		ray_y = t->player.py + dy;
 		while (1)
 		{
-			int ray_x = t->player.px + dx * length;
-			int ray_y = t->player.py + dy * length;
-
-			if (ray_x < 0 || ray_x >= WIN_WIDTH || ray_y < 0 || ray_y >= WIN_HEIGHT)
+			if (is_player_colliding(t, ray_x, ray_y))
 				break ;
-			if (tester(t, ray_x, ray_y))
-				break ;
-			mlx_pixel_put(t->mlx, t->win, ray_x, ray_y, 0x00FF00);
-			length += 1;
+			mlx_pixel_put(t->mlx, t->win, (int)ray_x, (int)ray_y, 0x00FF00);
+			ray_x += dx;
+			ray_y += dy;
 		}
-		// still here
-
-
-
 		ray_angle += ray_step;
 	}
 }
@@ -175,14 +150,16 @@ void	ft_drawrays(t_globaldata *t)
 */
 void	ft_drawplayer(t_globaldata *t)
 {
-	int	(x), (y);
-
+	int (x), (y);
 	y = -1;
 	while (++y < 4)
 	{
 		x = -1;
 		while (++x < 4)
-			mlx_pixel_put(t->mlx, t->win, t->player.px + x, t->player.py + y, 0xFF0000);
+		{
+			mlx_pixel_put(t->mlx, t->win, t->player.px + x,
+				t->player.py + y, 0xFF0000);
+		}
 	}
 }
 
@@ -191,19 +168,13 @@ void	ft_drawplayer(t_globaldata *t)
 */
 void	ft_drawwall(int start_x, int start_y, t_globaldata *t)
 {
-	int	(x), (y);
-
+	int (x), (y);
 	y = -1;
 	while (++y < TILE_SIZE)
 	{
 		x = -1;
 		while (++x < TILE_SIZE)
-		{
-			if (y == 0 || x == 0)
-				mlx_pixel_put(t->mlx, t->win, start_x + x, start_y + y, 0x000000);
-			else
-				mlx_pixel_put(t->mlx, t->win, start_x + x, start_y + y, 0xFFFFFF);
-		}
+			mlx_pixel_put(t->mlx, t->win, start_x + x, start_y + y, 0xFFFFFF);
 	}
 }
 
@@ -213,8 +184,7 @@ void	ft_drawwall(int start_x, int start_y, t_globaldata *t)
 */
 int	rerenderinit(t_globaldata *t)
 {
-	int	(x), (y);
-
+	int (x), (y);
 	y = -1;
 	while (t->map[++y])
 	{
@@ -254,8 +224,7 @@ int	ft_charcmp(char c, char *s)
 */
 void	playerinit(t_globaldata *t)
 {
-	int	(x), (y);
-
+	int (x), (y);
 	y = -1;
 	while (t->map[++y])
 	{
@@ -297,6 +266,7 @@ void	gameinit(char **map, char **textures, int *colors)
 	playerinit(&t);
 	mlx_loop_hook(t.mlx, rerenderinit, &t);
 	mlx_hook(t.win, 2, 1L << 0, handle_press, &t);
+	mlx_hook(t.win, 17, 0L, exit_free, &t);
 	mlx_loop(t.mlx);
 }
 
@@ -309,9 +279,9 @@ int	main(void)
 	gameinit(
 		(char *[]){
 		"111111111111111",
-		"1W0000000000101",
-		"100000000000101",
-		"100000000000101",
+		"1W0100000000101",
+		"101000000000101",
+		"110000000000101",
 		"100000000000101",
 		"100000000000101",
 		"100001000000101",
@@ -328,6 +298,6 @@ int	main(void)
 		NULL
 	},
 		(int []){0xFFFFFF, 0xFF0000}
-	);
+		);
 	return (0);
 }

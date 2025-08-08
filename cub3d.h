@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/07 17:33:03 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/08 11:56:04 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 /**/
 # define PI 3.14159265358979323846 // value of PI
 # define PI2 6.28318530717958647692 // value of PI * 2
+# define PID2 1.57079632679489661923 // value of PI / 2
 
 /*
   datatype of player, include:
@@ -75,5 +76,24 @@ void	ft_drawplayer(t_globaldata *t);
 
 // draw rays
 void	ft_drawrays(t_globaldata *t);
+
+// check if the position is inside wall
+int		ft_iswall(t_globaldata *t, double currently_x, double currently_y);
+
+// check play if he is colliding depending in the FOV
+int		is_player_colliding(t_globaldata *t,
+			double currently_x, double currently_y);
+
+// handle the key press
+int		handle_press(int key, t_globaldata *t);
+
+// helper for handle_press function
+void	ft_setplayer(double new_x, double new_y, t_globaldata *t);
+
+// helper for handle_press function
+void	ft_setfov(double angler, t_globaldata *t);
+
+// exit and free the resources
+int		exit_free(t_globaldata *t);
 
 #endif
