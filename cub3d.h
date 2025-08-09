@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/08 11:56:04 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/09 10:42:07 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,8 @@
 # include <mlx.h>
 
 # define TILE_SIZE 30 // size of squares
-# define WIN_WIDTH 450 // total width for window
-# define WIN_HEIGHT 300 // total height for window
+# define WIN_WIDTH 1280 // total width for window
+# define WIN_HEIGHT 720 // total height for window
 // 60 in angler, the view margin of player, result of (PI / 3)
 # define FOV 1.0471975511965977461542144610932
 /**/
@@ -44,6 +44,18 @@ typedef struct s_player
 }	t_player;
 
 /*
+  some data to buffer screen image each rerender
+*/
+typedef struct s_image
+{
+	void	*ptr;
+	char	*data;
+	int		bpp;
+	int		size_line;
+	int		endian;
+}	t_image;
+
+/*
   the global data i need to pass to function to access to player, map ... details
 */
 typedef struct s_globaldata
@@ -54,6 +66,7 @@ typedef struct s_globaldata
 	char		**textures;
 	int			*colors;
 	t_player	player;
+	t_image		img;
 }	t_globaldata;
 
 // the function linking between parsing and ray-casting
@@ -69,7 +82,7 @@ int		ft_charcmp(char c, char *s);
 int		rerenderinit(t_globaldata *t);
 
 // draw 2D wall
-void	ft_drawwall(int start_x, int start_y, t_globaldata *t);
+void	ft_drawwall(int start_x, int start_y, t_globaldata *t, int color);
 
 // draw player position
 void	ft_drawplayer(t_globaldata *t);
@@ -95,5 +108,14 @@ void	ft_setfov(double angler, t_globaldata *t);
 
 // exit and free the resources
 int		exit_free(t_globaldata *t);
+
+// helper function to set a pixel in the image buffer
+void	my_mlx_pixel_put(t_image *img, int x, int y, int color);
+
+// draw background
+void	ft_drawbackground(t_globaldata *t);
+
+// draw rays as 3D
+void	ft_drwaray3d(t_globaldata *t, int length, int index);
 
 #endif

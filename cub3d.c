@@ -6,11 +6,46 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/08 11:56:11 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/09 10:50:37 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cub3d.h>
+
+/*
+  draw background
+*/
+void	ft_drawbackground(t_globaldata *t)
+{
+	int (y), (x);
+	y = -1;
+	while (++y < WIN_HEIGHT / 2)
+	{
+		x = -1;
+		while (++x < WIN_WIDTH)
+			my_mlx_pixel_put(&t->img, x, y, t->colors[0]);
+	}
+	y = WIN_HEIGHT / 2;
+	while (++y < WIN_HEIGHT)
+	{
+		x = -1;
+		while (++x < WIN_WIDTH)
+			my_mlx_pixel_put(&t->img, x, y, t->colors[1]);
+	}
+}
+
+/*
+  helper function to set a pixel in the image buffer
+*/
+void	my_mlx_pixel_put(t_image *img, int x, int y, int color)
+{
+	char	*dst;
+
+	if (x < 0 || x >= WIN_WIDTH || y < 0 || y >= WIN_HEIGHT)
+		return ;
+	dst = img->data + (y * img->size_line + x * (img->bpp / 8));
+	*(unsigned int *)dst = color;
+}
 
 /*
   helper for handle_press function
@@ -57,7 +92,6 @@ int	exit_free(t_globaldata *t)
 */
 int	handle_press(int key, t_globaldata *t)
 {
-	mlx_clear_window(t->mlx, t->win);
 	if (key == 119)
 		ft_setplayer(t->player.px + cos(t->player.angler) * 3,
 			t->player.py + sin(t->player.angler) * 3, t);
@@ -103,6 +137,28 @@ int	is_player_colliding(t_globaldata *t, double currently_x, double currently_y)
 }
 
 /*
+  draw rays as 3D
+*/
+void	ft_drwaray3d(t_globaldata *t, int length, int index)
+{
+	int (wall_height), (wall_start), (wall_end), (y);
+	wall_height = (int)(((double)TILE_SIZE / (double)length) * \
+		((WIN_WIDTH / 2) / tan(FOV / 2)));
+	if (wall_height > WIN_HEIGHT)
+		wall_height = WIN_HEIGHT;
+	if (wall_height < 1)
+		wall_height = 1;
+	wall_start = (WIN_HEIGHT / 2) - (wall_height / 2);
+	wall_end = (WIN_HEIGHT / 2) + (wall_height / 2);
+	y = wall_start;
+	while (y < wall_end)
+	{
+		my_mlx_pixel_put(&t->img, index, y, 0xFFFFFF);
+		y++;
+	}
+}
+
+/*
   draw rays, explaination:
   - i: how many rays will cast.
   - ray_angle: stores the angle of the current ray being cast.
@@ -119,7 +175,7 @@ int	is_player_colliding(t_globaldata *t, double currently_x, double currently_y)
 */
 void	ft_drawrays(t_globaldata *t)
 {
-	double (ray_angle), (ray_step), (dx), (dy), (ray_x), (ray_y), (i);
+	double (ray_angle), (ray_step), (dx), (dy), (ray_x), (ray_y), (i), (length);
 	ray_step = FOV / WIN_WIDTH;
 	ray_angle = t->player.angler - (FOV / 2);
 	i = -1;
@@ -133,14 +189,14 @@ void	ft_drawrays(t_globaldata *t)
 		dy = sin(ray_angle);
 		ray_x = t->player.px + dx;
 		ray_y = t->player.py + dy;
-		while (1)
+		length = 0;
+		while (!is_player_colliding(t, ray_x, ray_y))
 		{
-			if (is_player_colliding(t, ray_x, ray_y))
-				break ;
-			mlx_pixel_put(t->mlx, t->win, (int)ray_x, (int)ray_y, 0x00FF00);
 			ray_x += dx;
 			ray_y += dy;
+			length++;
 		}
+		ft_drwaray3d(t, length, i);
 		ray_angle += ray_step;
 	}
 }
@@ -156,17 +212,15 @@ void	ft_drawplayer(t_globaldata *t)
 	{
 		x = -1;
 		while (++x < 4)
-		{
-			mlx_pixel_put(t->mlx, t->win, t->player.px + x,
+			my_mlx_pixel_put(&t->img, t->player.px + x,
 				t->player.py + y, 0xFF0000);
-		}
 	}
 }
 
 /*
   draw 2D wall
 */
-void	ft_drawwall(int start_x, int start_y, t_globaldata *t)
+void	ft_drawwall(int start_x, int start_y, t_globaldata *t, int color)
 {
 	int (x), (y);
 	y = -1;
@@ -174,7 +228,7 @@ void	ft_drawwall(int start_x, int start_y, t_globaldata *t)
 	{
 		x = -1;
 		while (++x < TILE_SIZE)
-			mlx_pixel_put(t->mlx, t->win, start_x + x, start_y + y, 0xFFFFFF);
+			my_mlx_pixel_put(&t->img, start_x + x, start_y + y, color);
 	}
 }
 
@@ -184,19 +238,9 @@ void	ft_drawwall(int start_x, int start_y, t_globaldata *t)
 */
 int	rerenderinit(t_globaldata *t)
 {
-	int (x), (y);
-	y = -1;
-	while (t->map[++y])
-	{
-		x = -1;
-		while (t->map[y][++x])
-		{
-			if (ft_charcmp(t->map[y][x], "1"))
-				ft_drawwall(x * TILE_SIZE, y * TILE_SIZE, t);
-		}
-	}
-	ft_drawplayer(t);
+	ft_drawbackground(t);
 	ft_drawrays(t);
+	mlx_put_image_to_window(t->mlx, t->win, t->img.ptr, 0, 0);
 	return (0);
 }
 
@@ -264,6 +308,9 @@ void	gameinit(char **map, char **textures, int *colors)
 	t.mlx = mlx_init();
 	t.win = mlx_new_window(t.mlx, WIN_WIDTH, WIN_HEIGHT, "...");
 	playerinit(&t);
+	t.img.ptr = mlx_new_image(t.mlx, WIN_WIDTH, WIN_HEIGHT);
+	t.img.data = mlx_get_data_addr(t.img.ptr, &t.img.bpp,
+			&t.img.size_line, &t.img.endian);
 	mlx_loop_hook(t.mlx, rerenderinit, &t);
 	mlx_hook(t.win, 2, 1L << 0, handle_press, &t);
 	mlx_hook(t.win, 17, 0L, exit_free, &t);
@@ -279,14 +326,14 @@ int	main(void)
 	gameinit(
 		(char *[]){
 		"111111111111111",
-		"1W0100000000101",
-		"101000000000101",
-		"110000000000101",
+		"1N0000000000001",
+		"100000000000001",
+		"110000000000001",
+		"100000000000001",
+		"100000000000001",
+		"100000000000001",
 		"100000000000101",
-		"100000000000101",
-		"100001000000101",
-		"100000100000101",
-		"100000010000001",
+		"100000000000001",
 		"111111111111111",
 		NULL
 	},
@@ -297,7 +344,7 @@ int	main(void)
 		"./path_to_the_east_texture",
 		NULL
 	},
-		(int []){0xFFFFFF, 0xFF0000}
+		(int []){0x0000AA, 0xFF0000}
 		);
 	return (0);
 }
