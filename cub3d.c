@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/09 10:50:37 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/09 12:21:42 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ int	handle_press(int key, t_globaldata *t)
 			t->player.py - sin(t->player.angler) * 3, t);
 	if (key == 97)
 		ft_setplayer(t->player.px + cos(t->player.angler - PID2) * 3,
-			t->player.py + sin(t->player.angler - PID2), t);
+			t->player.py + sin(t->player.angler - PID2) * 3, t);
 	if (key == 100)
 		ft_setplayer(t->player.px + cos(t->player.angler + PID2) * 3,
 			t->player.py + sin(t->player.angler + PID2) * 3, t);
@@ -153,7 +153,7 @@ void	ft_drwaray3d(t_globaldata *t, int length, int index)
 	y = wall_start;
 	while (y < wall_end)
 	{
-		my_mlx_pixel_put(&t->img, index, y, 0xFFFFFF);
+		my_mlx_pixel_put(&t->img, index, y, 0x669BBC);
 		y++;
 	}
 }
@@ -189,7 +189,7 @@ void	ft_drawrays(t_globaldata *t)
 		dy = sin(ray_angle);
 		ray_x = t->player.px + dx;
 		ray_y = t->player.py + dy;
-		length = 0;
+		length = 1;
 		while (!is_player_colliding(t, ray_x, ray_y))
 		{
 			ray_x += dx;
@@ -326,14 +326,14 @@ int	main(void)
 	gameinit(
 		(char *[]){
 		"111111111111111",
-		"1N0000000000001",
-		"100000000000001",
-		"110000000000001",
-		"100000000000001",
-		"100000000000001",
-		"100000000000001",
+		"1N0100001000001",
+		"100001000000001",
+		"110100001010001",
+		"100011000000001",
+		"100100000000001",
+		"100001001000001",
 		"100000000000101",
-		"100000000000001",
+		"100001000000001",
 		"111111111111111",
 		NULL
 	},
