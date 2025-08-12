@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/09 16:44:26 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/12 09:19:28 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,6 @@ void	my_mlx_pixel_put(t_image *img, int x, int y, int color);
 void	ft_drawbackground(t_globaldata *t);
 
 // draw rays as 3D
-void	ft_drwaray3d(t_globaldata *t, int length, int index);
+void	ft_drwaray3d(t_globaldata *t, double length, int index, double ray_angle, int color);
 
 #endif

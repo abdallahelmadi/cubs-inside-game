@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/09 16:43:40 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/12 09:22:01 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,23 +139,29 @@ int	is_player_colliding(t_globaldata *t, double currently_x, double currently_y)
 /*
   draw rays as 3D
 */
-void	ft_drwaray3d(t_globaldata *t, int length, int index)
+void	ft_drwaray3d(t_globaldata *t, double length, int index, double ray_angle, int color)
 {
-	int (wall_height), (wall_start), (wall_end), (y);
-	wall_height = (int)(((double)TILE_SIZE / (double)length) * \
+	double	corrected_length;
+	int		wall_height, wall_start, wall_end, y;
+
+	// Fish-eye correction
+	corrected_length = length * cos(ray_angle - t->player.angler);
+	if (corrected_length < 0.0001)
+		corrected_length = 0.0001;
+
+	wall_height = (int)((TILE_SIZE / corrected_length) *
 		((WIN_WIDTH / 2) / tan(FOV / 2)));
+
 	if (wall_height > WIN_HEIGHT)
 		wall_height = WIN_HEIGHT;
 	if (wall_height < 1)
 		wall_height = 1;
+
 	wall_start = (WIN_HEIGHT / 2) - (wall_height / 2);
 	wall_end = (WIN_HEIGHT / 2) + (wall_height / 2);
-	y = wall_start;
-	while (y < wall_end)
-	{
-		my_mlx_pixel_put(&t->img, index, y, 0x669BBC);
-		y++;
-	}
+
+	for (y = wall_start; y < wall_end; y++)
+		my_mlx_pixel_put(&t->img, index, y, color);
 }
 
 /*
@@ -175,28 +181,105 @@ void	ft_drwaray3d(t_globaldata *t, int length, int index)
 */
 void	ft_drawrays(t_globaldata *t)
 {
-	double (ray_angle), (ray_step), (dx), (dy), (ray_x), (ray_y), (i), (length);
+	double	ray_angle;
+	double	ray_step;
+	int		i;
+
 	ray_step = FOV / WIN_WIDTH;
 	ray_angle = t->player.angler - (FOV / 2);
 	i = -1;
 	while (++i < WIN_WIDTH)
 	{
 		if (ray_angle < 0)
-			ray_angle += PI2;
-		if (ray_angle > PI2)
-			ray_angle -= PI2;
-		dx = cos(ray_angle);
-		dy = sin(ray_angle);
-		ray_x = t->player.px + dx;
-		ray_y = t->player.py + dy;
-		length = 1;
-		while (!is_player_colliding(t, ray_x, ray_y))
+			ray_angle += 2 * PI;
+		if (ray_angle > 2 * PI)
+			ray_angle -= 2 * PI;
+
+		// Player position in map space
+		int mapX = (int)(t->player.px / TILE_SIZE);
+		int mapY = (int)(t->player.py / TILE_SIZE);
+
+		// Ray direction
+		double rayDirX = cos(ray_angle);
+		double rayDirY = sin(ray_angle);
+
+		// Distance to next grid boundary in x/y
+		double deltaDistX = fabs(1 / rayDirX);
+		double deltaDistY = fabs(1 / rayDirY);
+
+		// Step direction and initial sideDist
+		int stepX, stepY;
+		double sideDistX, sideDistY;
+
+		if (rayDirX < 0)
 		{
-			ray_x += dx;
-			ray_y += dy;
-			length++;
+			stepX = -1;
+			sideDistX = (t->player.px / TILE_SIZE - mapX) * deltaDistX;
 		}
-		ft_drwaray3d(t, length, i);
+		else
+		{
+			stepX = 1;
+			sideDistX = (mapX + 1.0 - t->player.px / TILE_SIZE) * deltaDistX;
+		}
+		if (rayDirY < 0)
+		{
+			stepY = -1;
+			sideDistY = (t->player.py / TILE_SIZE - mapY) * deltaDistY;
+		}
+		else
+		{
+			stepY = 1;
+			sideDistY = (mapY + 1.0 - t->player.py / TILE_SIZE) * deltaDistY;
+		}
+
+		// DDA loop
+		int hit = 0;
+		int side = 0; // 0 = vertical, 1 = horizontal
+		while (!hit)
+		{
+			if (sideDistX < sideDistY)
+			{
+				sideDistX += deltaDistX;
+				mapX += stepX;
+				side = 0;
+			}
+			else
+			{
+				sideDistY += deltaDistY;
+				mapY += stepY;
+				side = 1;
+			}
+			if (t->map[mapY][mapX] == '1') // wall
+				hit = 1;
+		}
+
+		// Perpendicular distance
+		double perpWallDist;
+		if (side == 0)
+			perpWallDist = (sideDistX - deltaDistX) * TILE_SIZE;
+		else
+			perpWallDist = (sideDistY - deltaDistY) * TILE_SIZE;
+
+		// Choose color based on wall orientation
+		int color;
+		if (side == 0) // vertical wall
+		{
+			if (rayDirX > 0)
+				color = 0xFF0000; // red (east)
+			else
+				color = 0x00FF00; // green (west)
+		}
+		else // horizontal wall
+		{
+			if (rayDirY > 0)
+				color = 0x0000FF; // blue (south)
+			else
+				color = 0xFFFF00; // yellow (north)
+		}
+
+		// Draw vertical slice
+		ft_drwaray3d(t, perpWallDist, i, ray_angle, color);
+
 		ray_angle += ray_step;
 	}
 }
@@ -344,7 +427,7 @@ int	main(void)
 		"./path_to_the_east_texture",
 		NULL
 	},
-		(int []){0x0000AA, 0xFF0000}
+		(int []){0xFFFFFF, 0x000000}
 		);
 	return (0);
 }
