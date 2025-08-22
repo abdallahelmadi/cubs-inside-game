@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/12 09:22:01 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/22 10:14:04 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -421,10 +421,10 @@ int	main(void)
 		NULL
 	},
 		(char *[]){
-		"./path_to_the_east_texture",
-		"./path_to_the_east_texture",
-		"./path_to_the_east_texture",
-		"./path_to_the_east_texture",
+		"./textures/wall-a.xpm",
+		"./textures/wall-b.xpm",
+		"./textures/wall-c.xpm",
+		"./textures/wall-d.xpm",
 		NULL
 	},
 		(int []){0xFFFFFF, 0x000000}
