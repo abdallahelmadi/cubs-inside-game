@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/22 10:14:04 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/08/24 09:32:08 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	ft_drawbackground(t_globaldata *t)
 		while (++x < WIN_WIDTH)
 			my_mlx_pixel_put(&t->img, x, y, t->colors[1]);
 	}
+	return ;
 }
 
 /*
