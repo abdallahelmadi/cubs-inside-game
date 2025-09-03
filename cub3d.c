@@ -6,34 +6,11 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/08/24 09:32:08 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/03 18:59:29 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cub3d.h>
-
-/*
-  draw background
-*/
-void	ft_drawbackground(t_globaldata *t)
-{
-	int (y), (x);
-	y = -1;
-	while (++y < WIN_HEIGHT / 2)
-	{
-		x = -1;
-		while (++x < WIN_WIDTH)
-			my_mlx_pixel_put(&t->img, x, y, t->colors[0]);
-	}
-	y = WIN_HEIGHT / 2;
-	while (++y < WIN_HEIGHT)
-	{
-		x = -1;
-		while (++x < WIN_WIDTH)
-			my_mlx_pixel_put(&t->img, x, y, t->colors[1]);
-	}
-	return ;
-}
 
 /*
   helper function to set a pixel in the image buffer
@@ -320,91 +297,24 @@ void	ft_drawwall(int start_x, int start_y, t_globaldata *t, int color)
   the function how's rerender each time to make animation,
   we call all fucntion of fetching here.
 */
-int	rerenderinit(t_globaldata *t)
-{
-	ft_drawbackground(t);
-	ft_drawrays(t);
-	mlx_put_image_to_window(t->mlx, t->win, t->img.ptr, 0, 0);
-	return (0);
-}
 
-/*
-  check if c include in s
-*/
-int	ft_charcmp(char c, char *s)
-{
-	int	i;
 
-	i = 0;
-	while (s[i])
-	{
-		if (c == s[i])
-			return (i + 1);
-		i++;
-	}
-	return (0);
-}
 
-/*
-  first we try to found the play as N, E, W or S,
-  and define the player x, y position.
-  in finall we define the view deriction in angler.
-*/
-void	playerinit(t_globaldata *t)
-{
-	int (x), (y);
-	y = -1;
-	while (t->map[++y])
-	{
-		x = -1;
-		while (t->map[y][++x])
-		{
-			if (ft_charcmp(t->map[y][x], "NEWS"))
-			{
-				t->player.px = x * TILE_SIZE + TILE_SIZE / 2;
-				t->player.py = y * TILE_SIZE + TILE_SIZE / 2;
-				if (t->map[y][x] == 'N')
-					t->player.angler = PI / 2;
-				else if (t->map[y][x] == 'E')
-					t->player.angler = 0;
-				else if (t->map[y][x] == 'W')
-					t->player.angler = PI;
-				else if (t->map[y][x] == 'S')
-					t->player.angler = 3 * PI / 2;
-				return ;
-			}
-		}
-	}
-}
 
-/*
-  create globaldata struct and open window, create player and define it.
-  and rerend the rerenderinit function to create animation.
-  with the press events handling.
-*/
-void	gameinit(char **map, char **textures, int *colors)
-{
-	t_globaldata	t;
 
-	t.colors = colors;
-	t.textures = textures;
-	t.map = map;
-	t.mlx = mlx_init();
-	t.win = mlx_new_window(t.mlx, WIN_WIDTH, WIN_HEIGHT, "...");
-	playerinit(&t);
-	t.img.ptr = mlx_new_image(t.mlx, WIN_WIDTH, WIN_HEIGHT);
-	t.img.data = mlx_get_data_addr(t.img.ptr, &t.img.bpp,
-			&t.img.size_line, &t.img.endian);
-	mlx_loop_hook(t.mlx, rerenderinit, &t);
-	mlx_hook(t.win, 2, 1L << 0, handle_press, &t);
-	mlx_hook(t.win, 17, 0L, exit_free, &t);
-	mlx_loop(t.mlx);
-}
 
-/*
-  you just need to call gameinit function to start the ray-casting.
-  the values of parameter, should be allocted to be freed later.
-*/
+
+
+
+
+
+
+
+
+
+
+
+
 int	main(void)
 {
 	gameinit(
@@ -422,10 +332,10 @@ int	main(void)
 		NULL
 	},
 		(char *[]){
-		"./textures/wall-a.xpm",
-		"./textures/wall-b.xpm",
-		"./textures/wall-c.xpm",
-		"./textures/wall-d.xpm",
+		"./textures/texture.xpm",
+		"./textures/texture.xpm",
+		"./textures/texture.xpm",
+		"./textures/texture.xpm",
 		NULL
 	},
 		(int []){0xFFFFFF, 0x000000}
