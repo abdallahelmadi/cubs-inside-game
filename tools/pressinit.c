@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 09:20:28 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/04 10:27:56 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/04 15:44:58 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int	pressinit(int key, t_globaldata *t)
 {
 	double	speed;
 
-	speed = 3;
+	speed = 4;
 	if (key == 119)
 		setposition(t->player.px + cos(t->player.angler) * speed,
 			t->player.py + sin(t->player.angler) * speed, t);

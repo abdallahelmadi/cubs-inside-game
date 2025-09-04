@@ -6,13 +6,14 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/04 11:16:52 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/04 16:14:51 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
+# include <strings.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
