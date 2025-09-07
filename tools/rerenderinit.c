@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 18:58:28 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/07 17:44:10 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/07 18:25:53 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,28 +42,18 @@ static void	drawbackground(t_globaldata *t)
 	return ;
 }
 
-static int	get_texture_color(t_get_texture_color_params params, t_globaldata *t)
+static int	get_texture_color(t_image *texture, int tex_x, int tex_y)
 {
-	t_image	*texture;
-	int		texture_line_x_position;
-	int		texture_line_y_position;
-	int		color;
-	double	wall_height;
+	int	color;
 
-	texture = &t->wrapper[params.texture_index];
-	texture_line_x_position = (int)(params.wall_hit_x_in_texture * texture->width);
-	if (texture_line_x_position < 0)
-		texture_line_x_position = 0;
-	if (texture_line_x_position >= texture->width)
-		texture_line_x_position = texture->width - 1;
-	wall_height = params.wall_end - params.wall_start;
-	texture_line_y_position = (int)(((params.tindex - params.wall_start) / wall_height) * texture->height);
-	if (texture_line_y_position < 0)
-		texture_line_y_position = 0;
-	if (texture_line_y_position >= texture->height)
-		texture_line_y_position = texture->height - 1;
-	color = *(unsigned int *)(texture->data + texture_line_y_position * texture->size_line + texture_line_x_position * (texture->bpp / 8));
-	return (color);
+	if (tex_x < 0) tex_x = 0;
+	if (tex_x >= texture->width) tex_x = texture->width - 1;
+	if (tex_y < 0) tex_y = 0;
+	if (tex_y >= texture->height) tex_y = texture->height - 1;
+	color = *(unsigned int *)(texture->data
+			+ tex_y * texture->size_line
+			+ tex_x * (texture->bpp / 8));
+	return (color & 0xFFFFFF);
 }
 
 static void	raycasting(t_globaldata *t)
@@ -88,18 +78,15 @@ static void	raycasting(t_globaldata *t)
 	int		perp_wall_on_screen;
 	int		start_draw;
 	int		end_draw;
-	int		tindex;
 	int		index;
-	t_get_texture_color_params	params;
+
 	ray_angle = t->player.angler - (FOV / 2);
 	ray_step = FOV / WIN_WIDTH;
 	index = -1;
 	while (++index < WIN_WIDTH)
 	{
-		if (ray_angle > 2 * PI)
-			ray_angle -= 2 * PI;
-		if (ray_angle < 0)
-			ray_angle += 2 * PI;
+		if (ray_angle > 2 * PI) ray_angle -= 2 * PI;
+		if (ray_angle < 0) ray_angle += 2 * PI;
 		ray_dir_x = cos(ray_angle);
 		ray_dir_y = sin(ray_angle);
 		delta_dist_x = fabs(1 / ray_dir_x);
@@ -148,42 +135,37 @@ static void	raycasting(t_globaldata *t)
 			perp_wall_dist = (side_dist_x - delta_dist_x);
 		else
 			perp_wall_dist = (side_dist_y - delta_dist_y);
+
 		if (side == 0)
-		{
-			if (ray_dir_x > 0)
-				texture_index = 3;
-			else
-				texture_index = 2;
-		}
+			texture_index = (ray_dir_x > 0) ? 3 : 2;
 		else
-		{
-			if (ray_dir_y > 0)
-				texture_index = 1;
-			else
-				texture_index = 0;
-		}
+			texture_index = (ray_dir_y > 0) ? 1 : 0;
+
 		corrected_dist = perp_wall_dist * cos(ray_angle - t->player.angler);
 		perp_wall_on_screen = (int)(WIN_HEIGHT / corrected_dist);
 		start_draw = (WIN_HEIGHT / 2) - (perp_wall_on_screen / 2);
 		end_draw = (WIN_HEIGHT / 2) + (perp_wall_on_screen / 2);
-		if (start_draw < 0)
-			start_draw = 0;
-		if (end_draw >= WIN_HEIGHT)
-			end_draw = WIN_HEIGHT - 1;
-		tindex = start_draw - 1;
-		while (++tindex < end_draw)
+		if (start_draw < 0) start_draw = 0;
+		if (end_draw >= WIN_HEIGHT) end_draw = WIN_HEIGHT - 1;
+
+		/* --------- حساب X في التكتشر --------- */
+		if (side == 0)
+			wall_hit_x_in_texture = t->player.py / TILE_SIZE + perp_wall_dist * ray_dir_y;
+		else
+			wall_hit_x_in_texture = t->player.px / TILE_SIZE + perp_wall_dist * ray_dir_x;
+		wall_hit_x_in_texture -= floor(wall_hit_x_in_texture);
+		int tex_x = (int)(wall_hit_x_in_texture * t->wrapper[texture_index].width);
+
+		/* --------- حساب Y في التكتشر بالـ step --------- */
+		double step = (double)t->wrapper[texture_index].height / (double)perp_wall_on_screen;
+		double tex_pos = (start_draw - WIN_HEIGHT / 2.0 + perp_wall_on_screen / 2.0) * step;
+
+		for (int y = start_draw; y < end_draw; y++)
 		{
-			if (side == 0)
-				wall_hit_x_in_texture = t->player.py / TILE_SIZE + perp_wall_dist * ray_dir_y;
-			else
-			    wall_hit_x_in_texture = t->player.px / TILE_SIZE + perp_wall_dist * ray_dir_x;
-			wall_hit_x_in_texture -= floor(wall_hit_x_in_texture);
-			params.tindex = tindex;
-			params.wall_start = start_draw;
-			params.wall_end = end_draw;
-			params.texture_index = texture_index;
-			params.wall_hit_x_in_texture = wall_hit_x_in_texture;
-			my_mlx_pixel_put(&t->img, index, tindex, get_texture_color(params, t));
+			int tex_y = (int)tex_pos;
+			tex_pos += step;
+			int color = get_texture_color(&t->wrapper[texture_index], tex_x, tex_y);
+			my_mlx_pixel_put(&t->img, index, y, color);
 		}
 		ray_angle += ray_step;
 	}
