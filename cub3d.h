@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/04 16:14:51 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/07 17:06:17 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,15 @@
 # define PI 3.14159265358979323846 // PI
 # define PI2 6.28318530717958647692 // PI * 2
 # define PID2 1.57079632679489661923 // PI / 2
+
+typedef struct s_get_texture_color_params
+{
+	int		tindex;
+	int		wall_start;
+	int		wall_end;
+	int		texture_index;
+	double	wall_hit_x_in_texture;
+}	t_get_texture_color_params;
 
 typedef struct s_player
 {

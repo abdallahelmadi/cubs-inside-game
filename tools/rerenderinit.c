@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 18:58:28 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/07 13:14:31 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/07 17:44:10 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,32 +42,27 @@ static void	drawbackground(t_globaldata *t)
 	return ;
 }
 
-static int	get_texture_color(int screen_y, int wall_start, int wall_end,
-		int texture_index, t_globaldata *t, double wall_hit_x)
+static int	get_texture_color(t_get_texture_color_params params, t_globaldata *t)
 {
-	t_image	*tex = &t->wrapper[texture_index];
-	int		tex_x;
-	int		tex_y;
+	t_image	*texture;
+	int		texture_line_x_position;
+	int		texture_line_y_position;
 	int		color;
 	double	wall_height;
 
-	if (!tex || !tex->data)
-		return (0xFFFFFF);
-
-	tex_x = (int)(wall_hit_x * tex->width);
-	if (tex_x < 0)
-		tex_x = 0;
-	if (tex_x >= tex->width)
-		tex_x = tex->width - 1;
-
-	wall_height = wall_end - wall_start;
-	tex_y = (int)(((screen_y - wall_start) / wall_height) * tex->height);
-	if (tex_y < 0)
-		tex_y = 0;
-	if (tex_y >= tex->height)
-		tex_y = tex->height - 1;
-
-	color = *(unsigned int *)(tex->data + tex_y * tex->size_line + tex_x * (tex->bpp / 8));
+	texture = &t->wrapper[params.texture_index];
+	texture_line_x_position = (int)(params.wall_hit_x_in_texture * texture->width);
+	if (texture_line_x_position < 0)
+		texture_line_x_position = 0;
+	if (texture_line_x_position >= texture->width)
+		texture_line_x_position = texture->width - 1;
+	wall_height = params.wall_end - params.wall_start;
+	texture_line_y_position = (int)(((params.tindex - params.wall_start) / wall_height) * texture->height);
+	if (texture_line_y_position < 0)
+		texture_line_y_position = 0;
+	if (texture_line_y_position >= texture->height)
+		texture_line_y_position = texture->height - 1;
+	color = *(unsigned int *)(texture->data + texture_line_y_position * texture->size_line + texture_line_x_position * (texture->bpp / 8));
 	return (color);
 }
 
@@ -95,6 +90,7 @@ static void	raycasting(t_globaldata *t)
 	int		end_draw;
 	int		tindex;
 	int		index;
+	t_get_texture_color_params	params;
 	ray_angle = t->player.angler - (FOV / 2);
 	ray_step = FOV / WIN_WIDTH;
 	index = -1;
@@ -108,10 +104,6 @@ static void	raycasting(t_globaldata *t)
 		ray_dir_y = sin(ray_angle);
 		delta_dist_x = fabs(1 / ray_dir_x);
 		delta_dist_y = fabs(1 / ray_dir_y);
-		if (ray_dir_x == 0)
-			delta_dist_x = 1e30;
-		if (ray_dir_y == 0)
-			delta_dist_y = 1e30;
 		map_x = (int)(t->player.px / TILE_SIZE);
 		map_y = (int)(t->player.py / TILE_SIZE);
 		if (ray_dir_x < 0)
@@ -186,9 +178,12 @@ static void	raycasting(t_globaldata *t)
 			else
 			    wall_hit_x_in_texture = t->player.px / TILE_SIZE + perp_wall_dist * ray_dir_x;
 			wall_hit_x_in_texture -= floor(wall_hit_x_in_texture);
-			my_mlx_pixel_put(&t->img, index, tindex,
-					get_texture_color(tindex, start_draw, end_draw,
-						texture_index, t, wall_hit_x_in_texture));
+			params.tindex = tindex;
+			params.wall_start = start_draw;
+			params.wall_end = end_draw;
+			params.texture_index = texture_index;
+			params.wall_hit_x_in_texture = wall_hit_x_in_texture;
+			my_mlx_pixel_put(&t->img, index, tindex, get_texture_color(params, t));
 		}
 		ray_angle += ray_step;
 	}

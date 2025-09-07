@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/07 11:46:57 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/07 17:33:18 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,10 @@ int	main(void)
 		NULL
 	},
 		(char *[]){
+		"./textures/a.xpm",
+		"./textures/s.xpm",
 		"./textures/t.xpm",
-		"./textures/t.xpm",
-		"./textures/t.xpm",
-		"./textures/t.xpm",
+		"./textures/z.xpm",
 		NULL
 	},
 		(int []){0x0A4481, 0x11351B}
