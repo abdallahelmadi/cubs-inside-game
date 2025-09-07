@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:51:14 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/04 10:13:53 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/07 11:46:57 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,13 +29,13 @@ int	main(void)
 		NULL
 	},
 		(char *[]){
-		"./textures/maflag.xpm",
-		"./textures/maflag.xpm",
-		"./textures/maflag.xpm",
-		"./textures/maflag.xpm",
+		"./textures/t.xpm",
+		"./textures/t.xpm",
+		"./textures/t.xpm",
+		"./textures/t.xpm",
 		NULL
 	},
-		(int []){0xFFFFFF, 0x000000}
+		(int []){0x0A4481, 0x11351B}
 		);
 	return (0);
 }
