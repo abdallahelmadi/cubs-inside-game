@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/08 15:46:15 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/08 16:52:11 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <fcntl.h>
 # include <math.h>
 # include <mlx.h>
+# include <cub.h>
 
 # define TILE_SIZE 36
 # define WIN_WIDTH 1280
@@ -39,6 +40,8 @@
 # define KEY_ESC 65307
 
 # define SPEED 5
+
+typedef struct s_config	t_config;
 
 typedef struct s_get_texture_color_params
 {
@@ -77,9 +80,10 @@ typedef struct s_globaldata
 	t_player	player;
 	t_image		img;
 	t_image		wrapper[4];
+	t_config	*config;
 }	t_globaldata;
 
-void	gameinit(char **map, char **textures, int *colors);
+void	gameinit(char **map, char **textures, int *colors, t_config *config);
 void	playerinit(t_globaldata *t);
 int		rerenderinit(t_globaldata *t);
 int		exitinit(t_globaldata *t);

@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 18:58:28 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/07 18:25:53 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/08 17:19:15 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ static void	raycasting(t_globaldata *t)
 		if (side == 0)
 			texture_index = (ray_dir_x > 0) ? 3 : 2;
 		else
-			texture_index = (ray_dir_y > 0) ? 1 : 0;
+			texture_index = (ray_dir_y > 0) ? 0 : 1;
 
 		corrected_dist = perp_wall_dist * cos(ray_angle - t->player.angler);
 		perp_wall_on_screen = (int)(WIN_HEIGHT / corrected_dist);
