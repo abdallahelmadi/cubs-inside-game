@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/07 17:06:17 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:46:15 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,16 @@
 # define PI 3.14159265358979323846 // PI
 # define PI2 6.28318530717958647692 // PI * 2
 # define PID2 1.57079632679489661923 // PI / 2
+
+# define KEY_A 97
+# define KEY_S 115
+# define KEY_D 100
+# define KEY_W 119
+# define KEY_LEFT 65361
+# define KEY_RIGHT 65363
+# define KEY_ESC 65307
+
+# define SPEED 5
 
 typedef struct s_get_texture_color_params
 {

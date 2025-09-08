@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 09:20:28 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/05 11:30:21 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/08 15:49:32 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,26 +54,23 @@ static void	setfov(double angler, t_globaldata *t)
 
 int	pressinit(int key, t_globaldata *t)
 {
-	double	speed;
-
-	speed = 4;
-	if (key == 119)
-		setposition(t->player.px + cos(t->player.angler) * speed,
-			t->player.py + sin(t->player.angler) * speed, t);
-	if (key == 115)
-		setposition(t->player.px - cos(t->player.angler) * speed,
-			t->player.py - sin(t->player.angler) * speed, t);
-	if (key == 97)
-		setposition(t->player.px + cos(t->player.angler - PID2) * speed,
-			t->player.py + sin(t->player.angler - PID2) * speed, t);
-	if (key == 100)
-		setposition(t->player.px + cos(t->player.angler + PID2) * speed,
-			t->player.py + sin(t->player.angler + PID2) * speed, t);
-	if (key == 65361)
+	if (key == KEY_W)
+		setposition(t->player.px + cos(t->player.angler) * SPEED,
+			t->player.py + sin(t->player.angler) * SPEED, t);
+	if (key == KEY_S)
+		setposition(t->player.px - cos(t->player.angler) * SPEED,
+			t->player.py - sin(t->player.angler) * SPEED, t);
+	if (key == KEY_A)
+		setposition(t->player.px + cos(t->player.angler - PID2) * SPEED,
+			t->player.py + sin(t->player.angler - PID2) * SPEED, t);
+	if (key == KEY_D)
+		setposition(t->player.px + cos(t->player.angler + PID2) * SPEED,
+			t->player.py + sin(t->player.angler + PID2) * SPEED, t);
+	if (key == KEY_LEFT)
 		setfov(t->player.angler - PI / 12, t);
-	if (key == 65363)
+	if (key == KEY_RIGHT)
 		setfov(t->player.angler + PI / 12, t);
-	if (key == 65307)
+	if (key == KEY_ESC)
 		exitinit(t);
 	return (0);
 }
