@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/08 16:52:11 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/09 10:58:50 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,15 +43,6 @@
 
 typedef struct s_config	t_config;
 
-typedef struct s_get_texture_color_params
-{
-	int		tindex;
-	int		wall_start;
-	int		wall_end;
-	int		texture_index;
-	double	wall_hit_x_in_texture;
-}	t_get_texture_color_params;
-
 typedef struct s_player
 {
 	double	px;
@@ -85,6 +76,7 @@ typedef struct s_globaldata
 
 void	gameinit(char **map, char **textures, int *colors, t_config *config);
 void	playerinit(t_globaldata *t);
+void	rerenderinit_utils(t_globaldata *t, double *ray_angle, int line_index);
 int		rerenderinit(t_globaldata *t);
 int		exitinit(t_globaldata *t);
 int		pressinit(int key, t_globaldata *t);
