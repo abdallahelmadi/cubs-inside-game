@@ -97,15 +97,11 @@ int	validate_colors(char **colors)
 	}
 	if (check_valid_colors(colors) != 0)
 		return (1);
-	if (check_range_rgb(ft_atoi(colors[0])) == 0
-		&& check_range_rgb(ft_atoi(colors[1])) == 0
-		&& check_range_rgb(ft_atoi(colors[2])) == 0)
+	if (check_range_rgb(ft_atoi(colors[0])) != 0
+		|| check_range_rgb(ft_atoi(colors[1])) != 0
+		|| check_range_rgb(ft_atoi(colors[2])) != 0)
 	{
-		return (0);
-	}
-	else
-	{
-		write(2, "Error: Invalid color values\n", 28);
 		return (1);
 	}
+	return (0);
 }

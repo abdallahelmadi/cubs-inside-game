@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_colors.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: bnafiai <bnafiai@student.42.fr>            +#+  +:+       +#+        */
+/*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 17:51:14 by bnafiai           #+#    #+#             */
-/*   Updated: 2025/09/04 14:45:01 by bnafiai          ###   ########.fr       */
+/*   Updated: 2025/09/09 15:21:48 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int	check_valid_colors(char **colors)
 				break ;
 			if (colors[i][j] < '0' || colors[i][j] > '9')
 			{
-				write(2, "Invalid color value\n", 20);
+				write(2, "Error : Invalid color value\n", 28);
 				return (1);
 			}
 			j++;
