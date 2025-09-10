@@ -10,6 +10,7 @@ OBJECTS = ./main.o \
 		  ./tools/pressinit.o \
 		  ./tools/exitinit.o \
 		  ./tools/rerenderinit_utils.o \
+		  ./tools/_rerenderinit_utils.o \
 		  ./utils/helper_functions.o \
 		  ./parsin/check_path.o \
 		  ./parsin/check_map.o \

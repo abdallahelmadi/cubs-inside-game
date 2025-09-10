@@ -6,14 +6,13 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/09 12:08:06 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/10 09:34:45 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# include <strings.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
@@ -21,6 +20,7 @@
 # include <math.h>
 # include <mlx.h>
 # include <cub.h>
+# include <string.h>
 
 # define TILE_SIZE 36
 # define WIN_WIDTH 1280
@@ -74,11 +74,48 @@ typedef struct s_globaldata
 	t_config	*config;
 }	t_globaldata;
 
+typedef struct s_rerenderinit_utils_variables
+{
+	double	ray_dir_x;
+	double	ray_dir_y;
+	double	delta_dist_x;
+	double	delta_dist_y;
+	double	side_dist_x;
+	double	side_dist_y;
+	double	perp_wall_dist;
+	double	corrected_dist;
+	double	perp_wall_on_screen;
+	double	wall_hit_x_in_texture;
+	double	texture_step;
+	double	tex_y;
+	int		map_x;
+	int		map_y;
+	int		step_x;
+	int		step_y;
+	int		side;
+	int		texture_index;
+	int		start_draw;
+	int		end_draw;
+	int		tex_x;
+	int		tindex;
+}	t_rerenderinit_utils_variables;
+
 void	gameinit(char **map, char **textures, int *colors, t_config *config);
 void	playerinit(t_globaldata *t);
 void	rerenderinit_utils(t_globaldata *t, double *ray_angle, int line_index);
 int		rerenderinit(t_globaldata *t);
 int		exitinit(t_globaldata *t);
 int		pressinit(int key, t_globaldata *t);
+
+void	fetch_walls(t_rerenderinit_utils_variables *v,
+			t_globaldata *t, int line_index);
+void	fish_eye_and_texture_x_position(t_rerenderinit_utils_variables *v,
+			t_globaldata *t, double *ray_angle);
+void	get_texture_index(t_rerenderinit_utils_variables *v);
+void	dda_logic(t_rerenderinit_utils_variables *v, t_globaldata *t);
+void	calcule_side_dists(t_rerenderinit_utils_variables *v,
+			t_globaldata *t);
+int		get_texture_color(t_image *texture, int tex_x, int tex_y);
+void	my_mlx_pixel_put(t_image *img, int x, int y, int color);
 
 #endif
