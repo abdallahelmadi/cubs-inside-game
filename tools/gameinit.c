@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 18:41:51 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/08 17:45:22 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/13 11:16:14 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void	gameinit(char **map, char **textures, int *colors, t_config *config)
 	t.wrapper[2].ptr = NULL;
 	t.wrapper[3].ptr = NULL;
 	t.win = NULL;
+	ft_memset(&(t.keys), 0, sizeof(t.keys));
 	t.mlx = mlx_init();
 	load_wrapper(&t);
 	t.win = mlx_new_window(t.mlx, WIN_WIDTH, WIN_HEIGHT, "...");
@@ -72,6 +73,7 @@ void	gameinit(char **map, char **textures, int *colors, t_config *config)
 			&t.img.size_line, &t.img.endian);
 	mlx_loop_hook(t.mlx, rerenderinit, &t);
 	mlx_hook(t.win, 2, 1L << 0, pressinit, &t);
+	mlx_hook(t.win, 3, 1L << 1, releaseinit, &t);
 	mlx_hook(t.win, 17, 0L, exitinit, &t);
 	mlx_loop(t.mlx);
 }

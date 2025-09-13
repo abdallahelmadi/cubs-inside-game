@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/08 17:52:18 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/10 09:34:52 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/13 11:15:10 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int	get_texture_color(t_image *texture, int tex_x, int tex_y)
 	return (color & 0xFFFFFF);
 }
 
-static void	ft_memset(void *addr, char value, int size)
+void	ft_memset(void *addr, char value, int size)
 {
 	int	index;
 

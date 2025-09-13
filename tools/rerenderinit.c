@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 18:58:28 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/10 09:34:57 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/13 11:08:04 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ static void	raycasting(t_globaldata *t)
 
 int	rerenderinit(t_globaldata *t)
 {
+	handle_keys(t);
 	drawbackground(t);
 	raycasting(t);
 	mlx_put_image_to_window(t->mlx, t->win, t->img.ptr, 0, 0);

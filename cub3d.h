@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/06 08:49:04 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/10 09:34:45 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/13 11:23:17 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@
 # define KEY_RIGHT 65363
 # define KEY_ESC 65307
 
-# define SPEED 5
+# define SPEED 0.66
 
 typedef struct s_config	t_config;
 
@@ -68,6 +68,7 @@ typedef struct s_globaldata
 	char		**map;
 	char		**textures;
 	int			*colors;
+	int			keys[75361];
 	t_player	player;
 	t_image		img;
 	t_image		wrapper[4];
@@ -106,6 +107,10 @@ void	rerenderinit_utils(t_globaldata *t, double *ray_angle, int line_index);
 int		rerenderinit(t_globaldata *t);
 int		exitinit(t_globaldata *t);
 int		pressinit(int key, t_globaldata *t);
+int		releaseinit(int key, t_globaldata *t);
+void	handle_keys(t_globaldata *t);
+void	ft_memset(void *addr, char value, int size);
+int		ft_iswall(t_globaldata *t, double currently_x, double currently_y);
 
 void	fetch_walls(t_rerenderinit_utils_variables *v,
 			t_globaldata *t, int line_index);

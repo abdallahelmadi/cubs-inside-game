@@ -66,8 +66,8 @@ int	main(int argc, char **argv)
 		return (free_config(config), 1);
 	gameinit(config->map,
 		(char *[]){
-		config->no_texture,
 		config->so_texture,
+		config->no_texture,
 		config->we_texture,
 		config->ea_texture,
 		NULL

@@ -23,7 +23,8 @@ OBJECTS = ./main.o \
 		  ./parsin/check_colors.o \
 		  ./parsin/assign_col.o \
 		  ./parsin/create_map_helper.o \
-		  ./utils/others.o
+		  ./utils/others.o \
+		  ./tools/releaseinit.o
 
 all : $(NAME)
 

@@ -6,7 +6,7 @@
 /*   By: abdael-m <abdael-m@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 18:17:50 by abdael-m          #+#    #+#             */
-/*   Updated: 2025/09/03 18:38:46 by abdael-m         ###   ########.fr       */
+/*   Updated: 2025/09/13 10:50:49 by abdael-m         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,11 @@ void	playerinit(t_globaldata *t)
 				if (t->map[y][x] == 'E')
 					t->player.angler = 0;
 				else if (t->map[y][x] == 'N')
-					t->player.angler = PI / 2;
+					t->player.angler = 3 * PI / 2;
 				else if (t->map[y][x] == 'W')
 					t->player.angler = PI;
 				else if (t->map[y][x] == 'S')
-					t->player.angler = 3 * PI / 2;
+					t->player.angler = PI / 2;
 				return ;
 			}
 		}
