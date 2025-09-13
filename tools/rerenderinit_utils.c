@@ -27,7 +27,7 @@ int	get_texture_color(t_image *texture, int tex_x, int tex_y)
 	color = *(unsigned int *)(texture->data
 			+ tex_y * texture->size_line
 			+ tex_x * (texture->bpp / 8));
-	return (color & 0xFFFFFF);
+	return (color);
 }
 
 void	ft_memset(void *addr, char value, int size)
